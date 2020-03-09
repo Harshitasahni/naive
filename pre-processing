@@ -1,0 +1,33 @@
+import pandas as pd
+from scipy import sparse 
+import numpy as np
+import scipy.sparse
+
+data=pd.read_csv('C:\\Users\\harsh\\Downloads\\training (2).csv')
+vocab = pd.read_csv("C:\\Users\\harsh\\Downloads\\vocabularyc.csv")
+classc= pd.read_csv("C:\\Users\\harsh\\Downloads\\newsgrouplabels.csv")
+classc.columns=['id','group']
+classc=classc.to_numpy()
+vocab_np = vocab.to_numpy()
+classc2=np.delete(classc,0,axis=1)
+dictlist = [dict() for x in range(5)]
+arr = data.to_numpy()
+x_train_sparse=sparse.csr_matrix(arr)
+x_train_sparse_length = arr.shape[0]
+x_lastCol = arr[:,-1]
+dltlastcol = np.delete(arr, -1, axis=1)    
+dltlastcol1 = np.delete(dltlastcol,0,axis=1) 
+x_train_sparse=sparse.csr_matrix(dltlastcol1)
+x_train_sparse_length = dltlastcol1.shape[0]
+res_temp=vocab_np[0]
+clss_temp=classc2[x_lastCol[4]]
+rows,cols = x_train_sparse.nonzero()
+
+dict_rows_as_docs = [dict() for x in range(x_train_sparse_length)]
+
+for row,col in zip(rows,cols):
+    voc_temp=vocab_np[col]
+    class_value= classc2[x_lastCol[row]-1]
+    dict_rows_as_docs[row][voc_temp[0]]=(x_train_sparse[row,col],class_value[0])
+dict_rows_as_docs    
+
