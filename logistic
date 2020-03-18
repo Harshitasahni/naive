@@ -1,0 +1,49 @@
+import csv
+import pandas as pd
+import numpy as np
+import itertools
+from scipy.sparse import csr_matrix
+from scipy.sparse import save_npz, load_npz
+from pandas import read_csv
+from scipy.sparse import hstack
+from math import exp
+sparse_mtx=csr_matrix(data_new)
+import pandas as pd
+
+data=pd.read_csv('training (2).csv',header=None)
+
+#adding 1 to the data matrix for w0 and subracting 1 from class labels since range is from 0-19
+A=np.ones(12000)
+data.insert(0,column=0,  value=A)
+data_class=data.iloc[:,data.shape[1]-1]
+data_class=data_class-1
+
+#dropping the 0 and last column from my data matrix 
+data=data.drop(0 ,axis=1)
+data=data.drop(61190 ,axis="columns")
+
+#converting into sparse matrix for easy calculation and saving in into a file 
+sparse_mtx=csr_matrix(data)
+save_npz('training_sparse',sparse_mtx)
+
+#initialize weights:K* n+1
+W= np.zeros((20,61189))
+W[:,:]=0.001
+
+
+# prob matrix 
+def probX(W,sparse_mtx):
+    probarr=W@sparse_mtx.T
+    probarr=probarr.expm1()
+
+deltaarr=np.zeros((20,12000))
+#delta matrix where deltarr[i][j]=1 for a class to which document belongs to (k*m)
+    col=deltaarr.shape[1]
+    for j in range (0,col):
+        #print(j)
+        c=data_class[j]
+        #print(c)
+        deltaarr[c][j]= 1.0
+        #print(deltaarr[c][j])
+        
+ 
